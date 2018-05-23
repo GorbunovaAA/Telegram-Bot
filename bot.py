@@ -31,6 +31,11 @@ help_list = '''/help - список команд\n
 '''
 
 
+with open('TOKEN.txt', 'r') as file:
+    TOKEN = file.read()
+bot = telebot.TeleBot(TOKEN) 
+
+
 class User:
     def __init__(self, user_id):
         self.id = user_id
