@@ -77,13 +77,13 @@ def get_all_undebts(message):
 
 
 @bot.message_handler(commands='ask_debt')
-def get_all_undebts(message):
+def ask_debt(message):
     result = bot_commands.ask_debt(message.text, message.chat.id)
     bot.send_message(message.chat.id, result)
 
 
 @bot.message_handler()
-def get_all_undebts(message):
+def wrong_message(message):
     bot.send_message(message.chat.id, 'Неверно введена команда.\nВоспользуйтесь /help для получения списка доступных команд.')
 
 
