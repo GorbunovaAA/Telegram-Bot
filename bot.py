@@ -42,7 +42,12 @@ class User:
         self.action = 'start'
 
 
-@bot.message_handler(command='new_user')
+@bot.message_handler(commands=['help', 'start'])
+def bot_help(message):
+    bot.send_message(message.chat.id, HELP_LIST)
+
+
+@bot.message_handler(commands='new_user')
 def new_user(message):
     bot_commands.check_chat_id(message.chat.id)
     chat_id = message.chat.id
@@ -50,35 +55,35 @@ def new_user(message):
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(command='all_users')
+@bot.message_handler(commands='all_users')
 def all_users(message):
     bot_commands.check_chat_id(message.chat.id)
     result = bot_commands.all_users()
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(command='new_debt')
+@bot.message_handler(commands='new_debt')
 def new_debt(message):
     bot_commands.check_chat_id(message.chat.id)
     result = bot_commands.update_debt(message.text)
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(command='all_debts')
+@bot.message_handler(commands='all_debts')
 def get_all_debts(message):
     bot_commands.check_chat_id(message.chat.id)
     result = bot_commands.get_all_debts(message.text)
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(command='all_undebts')
+@bot.message_handler(commands='all_undebts')
 def get_all_undebts(message):
     bot_commands.check_chat_id(message.chat.id)
     result = bot_commands.get_all_undebts(message.text)
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(command='ask_debt')
+@bot.message_handler(commands='ask_debt')
 def get_all_undebts(message):
     bot_commands.check_chat_id(message.chat.id)
     result = bot_commands.ask_debt(message.text)
