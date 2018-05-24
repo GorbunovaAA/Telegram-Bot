@@ -7,13 +7,7 @@ less_arguments = 'Недостаточно аргументов'
 wrong_arguments = 'Введены некорректные данные'
 
 
-def check_chat_id(chat_id, cur_chat_id):
-    if chat_id != cur_chat_id:
-        cur_chat_id = chat_id
-        db_query.change_db(chat_id)
-
-
-def add_user(message_text):
+def add_user(message_text, chat_id):
     text = re.findall(r'\w+', message_text)
     if len(text) > 2:
         return many_arguments
@@ -21,11 +15,11 @@ def add_user(message_text):
         return less_arguments
     if not (''.join(text).isalpha()):
         return wrong_arguments
-    return db_query.add_user(text[0], text[1])
+    return db_query.add_user(text[0], text[1], chat_id)
 
 
-def all_users():
-    names, surnames = db_query.all_users()
+def all_users(chat_id):
+    names, surnames = db_query.all_users(chat_id)
     if len(names) == 0:
         return 'Ни один пользователь еще не добавлен'
     result = ''
@@ -34,43 +28,43 @@ def all_users():
     return result
 
 
-def get_all_debts(message_text):
+def get_all_debts(message_text, chat_id):
     text = re.findall(r'\w+', message_text)
     if len(text) > 2:
         return many_arguments
     if len(text) < 2:
         return less_arguments
     if(''.join(text).isalpha()):
-        return db_query.get_all_debts(text[0], text[1])
+        return db_query.get_all_debts(text[0], text[1], chat_id)
     else:
         return wrong_arguments
 
 
-def get_all_undebts(message_text):
+def get_all_undebts(message_text, chat_id):
     text = re.findall(r'\w+', message_text)
     if len(text) > 2:
         return many_arguments
     if len(text) < 2:
         return less_arguments
     if(''.join(text).isalpha()):
-        return db_query.get_all_undebts(text[0], text[1])
+        return db_query.get_all_undebts(text[0], text[1], chat_id)
     else:
         return wrong_arguments
 
 
-def ask_debt(message_text):
+def ask_debt(message_text, chat_id):
     text = re.findall(r'\w+', message_text)
     if len(text) > 4:
         return many_arguments
     if len(text) < 4:
         return less_arguments
     if(''.join(text).isalpha()):
-        return db_query.select_debt(text[0], text[1], text[2], text[3])
+        return db_query.select_debt(text[0], text[1], text[2], text[3], chat_id)
     else:
         return wrong_arguments
 
 
-def update_debt(message_text):
+def update_debt(message_text, chat_id):
     text = re.findall(r'\w+', message_text)
     if(len(text) < 5):
         return less_arguments
@@ -81,7 +75,7 @@ def update_debt(message_text):
         sign = -1
     if(''.join(text[:4]).isalpha() and text[-1].isdigit()):
         result = db_query.update_debt(
-            text[0], text[1], text[2], text[3], sign * int(text[4]))
+            text[0], text[1], text[2], text[3], sign * int(text[4]), chat_id)
         return result
     else:
         return wrong_arguments
