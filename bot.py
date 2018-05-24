@@ -47,9 +47,8 @@ def bot_help(message):
 
 
 @bot.message_handler(commands=['new_user'])
-def new_user():
-    result = bot_commands.add_user('/new_user Dmitrii Ladin', 9)
-    return result
+def new_user(message):
+    result = bot_commands.add_user(message.text, message.chat.id)
     bot.send_message(message.chat.id, result)
 
 
