@@ -8,7 +8,7 @@ wrong_arguments = 'Введены некорректные данные'
 
 
 def add_user(message_text, chat_id):
-    text = re.findall(r'\w+', message_text)
+    text = re.findall(r'\w+', message_text)[1:]
     if len(text) > 2:
         return many_arguments
     if len(text) < 2:
@@ -23,7 +23,7 @@ def all_users(chat_id):
 
 
 def get_all_debts(message_text, chat_id):
-    text = re.findall(r'\w+', message_text)
+    text = re.findall(r'\w+', message_text)[1:]
     if len(text) > 2:
         return many_arguments
     if len(text) < 2:
@@ -35,7 +35,7 @@ def get_all_debts(message_text, chat_id):
 
 
 def get_all_undebts(message_text, chat_id):
-    text = re.findall(r'\w+', message_text)
+    text = re.findall(r'\w+', message_text)[1:]
     if len(text) > 2:
         return many_arguments
     if len(text) < 2:
@@ -47,7 +47,7 @@ def get_all_undebts(message_text, chat_id):
 
 
 def ask_debt(message_text, chat_id):
-    text = re.findall(r'\w+', message_text)
+    text = re.findall(r'\w+', message_text)[1:]
     if len(text) > 4:
         return many_arguments
     if len(text) < 4:
@@ -59,7 +59,7 @@ def ask_debt(message_text, chat_id):
 
 
 def update_debt(message_text, chat_id):
-    text = re.findall(r'\w+', message_text)
+    text = re.findall(r'\w+', message_text)[1:]
     if(len(text) < 5):
         return less_arguments
     if(len(text) > 5):

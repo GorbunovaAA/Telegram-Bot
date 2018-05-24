@@ -8,8 +8,8 @@ second_person_error = '(2) Участника с таким именем не с
 
 def add_user(new_name, new_surname, chat_id):
     person = Participant.select().where(
-        (Participant.chat_id == chat_id)
-        (Participant.name == new_name) &
+        (Participant.chat_id == chat_id),
+        (Participant.name == new_name),
         (Participant.surname == new_surname))
     if len(person) == 0:
         Participant.create(name=new_name, surname=new_surname, chat_id=chat_id)
