@@ -131,7 +131,7 @@ def select_debt(from_name, from_surname, to_name, to_surname, chat_id):
         return first_person_error
 
 
-def create_debt(from_name, from_surname, to_name, to_surname, value=0, chat_id):
+def create_debt(from_name, from_surname, to_name, to_surname, value, chat_id):
     if not exist(from_name, from_surname, chat_id):
         return '{} {} отсутствует среди участников'.\
               format(from_name, from_surname)
