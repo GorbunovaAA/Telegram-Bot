@@ -7,6 +7,12 @@ less_arguments = 'Недостаточно аргументов'
 wrong_arguments = 'Введены некорректные данные'
 
 
+def check_chat_id(chat_id, cur_chat_id):
+    if chat_id != cur_chat_id:
+        cur_chat_id = chat_id
+        db_query.change_db(chat_id)
+
+
 def add_user(message_text):
     text = re.findall(r'\w+', message_text)
     if len(text) > 2:

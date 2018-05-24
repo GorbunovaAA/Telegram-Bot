@@ -5,10 +5,16 @@ successful_result = 'Операция выполнена успешно'
 first_person_error = '(1) Участника с таким именем не существует'
 second_person_error = '(2) Участника с таким именем не существует'
 
+def change_db(chat_id):
+    db = SqliteDatabase('people{}.db'.format(chat_id))
+    db.create_tables([Participant, Currency, Indebtedness])
+    db.close()
+    
 
 def add_user(new_name, new_surname):
-    person = Participant.select().where((Participant.name == new_name) &
-                                        (Participant.surname == new_surname))
+    person = Participant.select().where(
+        (Participant.name == new_name) &
+        (Participant.surname == new_surname))
     if len(person) == 0:
         Participant.create(name=new_name, surname=new_surname)
         return 'Новый участник успешно добавлен'
@@ -31,6 +37,8 @@ def all_users():
 
 def get_all():
     queries = Indebtedness.select()
+    if len(Indebtedness) == 0:
+        return
     result = ''
     index = 0
     for query in queries:
@@ -51,8 +59,8 @@ def get_all_debts(_name, _surname):
     if not exist(_name, _surname):
         return '{} {} отсутствует среди участников'.\
               format(_name, _surname)
-    human = Participant.get(Participant.name == _name,
-                            Participant.surname == _surname)
+    human = Participant.get(
+        Participant.name == _name, Participant.surname == _surname)
     human_id = human.id
     people = Indebtedness.select().where(Indebtedness.from_id == human_id)
     if len(people) == 0:
@@ -130,13 +138,13 @@ def create_debt(from_name, from_surname, to_name, to_surname, value=0):
         return('Введите сумму задолженности')
     if value > 0:
         try:
-            from_id = Participant.select().where(Participant.name == from_name,
-                                                 Participant.surname ==
-                                                 from_surname).limit(1)[0]
+            from_id = Participant.select().where(
+                Participant.name == from_name,
+                Participant.surname == from_surname).limit(1)[0]
             try:
-                to_id = Participant.select().where(Participant.name == to_name,
-                                                   Participant.surname ==
-                                                   to_surname).limit(1)[0]
+                to_id = Participant.select().where(
+                    Participant.name == to_name,
+                    Participant.surname == to_surname).limit(1)[0]
                 try:
                     query = Indebtedness.select().where(
                         Indebtedness.from_id == from_id,
@@ -159,8 +167,8 @@ def create_debt(from_name, from_surname, to_name, to_surname, value=0):
 
 def exist(name, surname):
     try:
-        person_id = Participant.get(name == name,
-                                    surname == surname)
+        person_id = Participant.get(
+            name == name, surname == surname)
     except Exception:
         return False
     return True
@@ -179,14 +187,16 @@ def update_debt(from_name, from_surname, to_name, to_surname, value):
             #
             # Первый user
             #
-            from_id = Participant.get(Participant.name == from_name,
-                                      Participant.surname == from_surname)
+            from_id = Participant.get(
+                Participant.name == from_name,
+                Participant.surname == from_surname)
             try:
                 #
                 # Второй user
                 #
-                to_id = Participant.get(Participant.name == to_name,
-                                        Participant.surname == to_surname)
+                to_id = Participant.get(
+                    Participant.name == to_name,
+                    Participant.surname == to_surname)
                 try:
                     #
                     # Запрос to_from
@@ -236,3 +246,4 @@ def update_debt(from_name, from_surname, to_name, to_surname, value):
     else:
         return update_debt(
             to_name, to_surname, from_name, from_surname, -value)
+
