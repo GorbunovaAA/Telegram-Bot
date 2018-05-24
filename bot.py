@@ -52,7 +52,7 @@ def new_user(message):
 
 @bot.message_handler(commands='all_users')
 def all_users(message):
-    result = bot_commands.all_users()
+    result = bot_commands.all_users(message.chat.id)
     bot.send_message(message.chat.id, result)
 
 
