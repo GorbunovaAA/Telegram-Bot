@@ -32,7 +32,7 @@ cur_chat_id = 0
 
 
 with open('TOKEN.txt', 'r') as file:
-    TOKEN = file.read()
+    TOKEN = file.read().strip()
 bot = telebot.TeleBot(TOKEN) 
 
 
