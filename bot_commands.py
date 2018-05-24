@@ -19,13 +19,7 @@ def add_user(message_text, chat_id):
 
 
 def all_users(chat_id):
-    names, surnames = db_query.all_users(chat_id)
-    if len(names) == 0:
-        return 'Ни один пользователь еще не добавлен'
-    result = ''
-    for i in range(len(names)):
-        result += '{}. '.format(i + 1) + names[i] + ' ' + surnames[i] + '\n'
-    return result
+    return db_query.all_users(chat_id)
 
 
 def get_all_debts(message_text, chat_id):

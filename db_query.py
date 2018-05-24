@@ -21,14 +21,15 @@ def all_users(chat_id):
     users = Participant.select().where(Participant.chat_id == chat_id)
     names = []
     surnames = []
+    if len(names) == 0:
+        return 'Ни один пользователь еще не добавлен'
     for user in users:
         names.append(user.name)
         surnames.append(user.surname)
-    if len(names) == 0:
-        return [], []
-    if len(surnames) == 0:
-        return [], []
-    return names, surnames
+    result = ''
+    for i in range(len(names)):
+        result += '{}. {} {}\n'.format((i + 1), names[i], surnames[i])
+    return result
 
 
 def get_all(chat_id):
