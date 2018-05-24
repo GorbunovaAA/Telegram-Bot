@@ -23,8 +23,8 @@ class Currency(Model):
 
 
 class Indebtedness(Model):
-    from_id = ForeignKeyField(Participant, related_name='chat_id')
-    to_id = ForeignKeyField(Participant, related_name='chat_id')
+    from_id = ForeignKeyField(Participant, related_name='from_id')
+    to_id = ForeignKeyField(Participant, related_name='to_id')
     chat_id = CharField()
     debt = IntegerField(default=0)
     star_data = DateField(default=datetime.now())

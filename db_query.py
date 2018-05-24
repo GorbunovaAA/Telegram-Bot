@@ -6,13 +6,13 @@ first_person_error = '(1) Участника с таким именем не с�
 second_person_error = '(2) Участника с таким именем не существует'
 
 
-def add_user(new_name, new_surname, chat_id):
+def add_user(new_name, new_surname, new_chat_id):
     person = Participant.select().where(
-        (Participant.chat_id == chat_id),
-        (Participant.name == new_name),
-        (Participant.surname == new_surname))
+        Participant.chat_id == new_chat_id,
+        Participant.name == new_name,
+        Participant.surname == new_surname)
     if len(person) == 0:
-        Participant.create(name=new_name, surname=new_surname, chat_id=chat_id)
+        Participant.create(name=new_name, surname=new_surname, chat_id=new_chat_id)
         return 'Новый участник успешно добавлен'
     return 'Участник с таким именем уже существует'
 

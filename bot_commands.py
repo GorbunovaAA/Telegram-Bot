@@ -2,7 +2,7 @@ import db
 import db_query
 import re
 
-many_arguments = 'Слишком мало аргументов'
+many_arguments = 'Слишком много аргументов'
 less_arguments = 'Недостаточно аргументов'
 wrong_arguments = 'Введены некорректные данные'
 
