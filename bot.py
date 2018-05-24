@@ -49,7 +49,7 @@ def bot_help(message):
 @bot.message_handler(commands=['new_user'])
 def new_user(message):
     # result = bot_commands.add_user(message.text, message.chat.id)
-    bot.send_message(message.chat.id)
+    bot.send_message(message.chat.id, message.chat.id)
 
 
 @bot.message_handler(commands=['all_users'])
