@@ -18,8 +18,13 @@ def add_user(message_text, chat_id):
     return db_query.add_user(text[0], text[1], chat_id)
 
 
+print(add_user('/new_user Tanya Miller', '2'))
+
+
 def all_users(chat_id):
     return db_query.all_users(chat_id)
+
+print(all_users('1'))
 
 
 def get_all_debts(message_text, chat_id):

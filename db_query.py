@@ -21,11 +21,11 @@ def all_users(chat_id):
     users = Participant.select().where(Participant.chat_id == chat_id)
     names = []
     surnames = []
-    if len(names) == 0:
-        return 'Ни один пользователь еще не добавлен'
     for user in users:
         names.append(user.name)
         surnames.append(user.surname)
+    if len(names) == 0:
+        return 'Ни один пользователь еще не добавлен'
     result = ''
     for i in range(len(names)):
         result += '{}. {} {}\n'.format((i + 1), names[i], surnames[i])
@@ -34,7 +34,7 @@ def all_users(chat_id):
 
 def get_all(chat_id):
     queries = Indebtedness.select().where(Indebtedness.chat_id == chat_id)
-    if len(Indebtedness) == 0:
+    if len(queries) == 0:
         return
     result = ''
     index = 0
@@ -85,7 +85,7 @@ def get_all_undebts(_name, _surname, chat_id):
     human_id = human.id
     people = Indebtedness.select().where(
         Indebtedness.to_id == human_id, Indebtedness.chat_id == chat_id)
-    if len(people):
+    if len(people) == 0:
         return 'Задолженностей нет.'
     result = 'Задолженности({} {}):\n'.format(_name, _surname)
     index = 0
