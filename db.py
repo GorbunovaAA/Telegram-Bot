@@ -8,7 +8,7 @@ db = SqliteDatabase('people.db')
 class Participant(Model):
     name = CharField()
     surname = CharField()
-    chat_id = CharField()
+    chat_id = IntegerField()
 
     class Meta:
         database = db
@@ -25,7 +25,7 @@ class Currency(Model):
 class Indebtedness(Model):
     from_id = ForeignKeyField(Participant, related_name='from_id')
     to_id = ForeignKeyField(Participant, related_name='to_id')
-    chat_id = CharField()
+    chat_id = IntegerField()
     debt = IntegerField(default=0)
     star_data = DateField(default=datetime.now())
     expiry_data = DateField(default=datetime.now())
