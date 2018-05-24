@@ -46,37 +46,37 @@ def bot_help(message):
     bot.send_message(message.chat.id, HELP_LIST)
 
 
-@bot.message_handler(commands='new_user')
+@bot.message_handler(commands=['new_user'])
 def new_user(message):
     result = bot_commands.add_user(message.text, message.chat.id)
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(commands='all_users')
+@bot.message_handler(commands=['all_users'])
 def all_users(message):
     result = bot_commands.all_users(message.chat.id)
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(commands='new_debt')
+@bot.message_handler(commands=['new_debt'])
 def new_debt(message):
     result = bot_commands.update_debt(message.text, message.chat.id)
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(commands='all_debts')
+@bot.message_handler(commands=['all_debts'])
 def get_all_debts(message):
     result = bot_commands.get_all_debts(message.text, message.chat.id)
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(commands='all_undebts')
+@bot.message_handler(commands=['all_undebts'])
 def get_all_undebts(message):
     result = bot_commands.get_all_undebts(message.text, message.chat.id)
     bot.send_message(message.chat.id, result)
 
 
-@bot.message_handler(commands='ask_debt')
+@bot.message_handler(commands=['ask_debt'])
 def ask_debt(message):
     result = bot_commands.ask_debt(message.text, message.chat.id)
     bot.send_message(message.chat.id, result)
