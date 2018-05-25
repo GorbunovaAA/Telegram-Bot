@@ -1,6 +1,5 @@
 import telebot
 import bot_commands
-import re
 
 
 COMMAND_LIST = ['start', 'help', 'new_user',
@@ -18,15 +17,16 @@ HELP_LIST = '''/help - список команд
 /new_debt - добавление новой записи
 Принимаемые параметры:
 Имя, Фамилия должника, Имя, Фамилия занимающего, задолженность
-/all_debts - все участники, которым должен выбранный
+/all_undebts - все участники, которым должен выбранный
 Принимаемые параметры:
 Имя, Фамилия
-/all_undebts - все участники, которые должны выбранному
+/all_debts - все участники, которые должны выбранному
 Принимаемы параметры:
 Имя, Фамилия
 /ask_debt - задолженность между двумя выбранными участниками
 Принимаемые параметры:
 Имя, Фамилия первого участника, Имя, Фамилия второго участника
+/get_all - возвращает все записи о задолженностях 
 '''
 
 
@@ -44,6 +44,12 @@ class User:
 @bot.message_handler(commands=['help', 'start'])
 def bot_help(message):
     bot.send_message(message.chat.id, HELP_LIST)
+
+
+@bot.message_handler(commands=['get_all'])
+def new_user(message):
+    result = bot_commands.get_all(message.chat.id)
+    bot.send_message(message.chat.id, result)
 
 
 @bot.message_handler(commands=['new_user'])

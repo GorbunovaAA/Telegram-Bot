@@ -2,8 +2,7 @@ from db import *
 
 
 successful_result = 'Операция выполнена успешно'
-first_person_error = '(1) Участника с таким именем не существует'
-second_person_error = '(2) Участника с таким именем не существует'
+person_error = 'Участника с таким именем не существует: {} {}'
 
 
 def add_user(new_name, new_surname, new_chat_id):
@@ -33,9 +32,9 @@ def all_users(chat_id):
 
 
 def get_all(chat_id):
-    queries = Indebtedness.select().where(Indebtedness.chat_id == chat_id)
+    queries = Indebtedness.select().where(Indebtedness.chat_id == chat_id, Indebtedness.debt > 0)
     if len(queries) == 0:
-        return
+        return "На данный момент нет задолженностей"
     result = ''
     index = 0
     for query in queries:
@@ -46,6 +45,7 @@ def get_all(chat_id):
             query.to_id.surname,
             query.debt
         )
+        index += 1
     return result
 
 
@@ -61,7 +61,8 @@ def get_all_debts(_name, _surname, chat_id):
         Participant.chat_id == chat_id)
     human_id = human.id
     people = Indebtedness.select().where(
-        Indebtedness.from_id == human_id, Indebtedness.chat_id == chat_id)
+        Indebtedness.from_id == human_id, Indebtedness.chat_id == chat_id,
+        Indebtedness.debt > 0)
     if len(people) == 0:
         return 'Должников нет.'
     result = 'Должники({} {}):\n'.format(_name, _surname)
@@ -84,7 +85,8 @@ def get_all_undebts(_name, _surname, chat_id):
         Participant.chat_id == chat_id)
     human_id = human.id
     people = Indebtedness.select().where(
-        Indebtedness.to_id == human_id, Indebtedness.chat_id == chat_id)
+        Indebtedness.to_id == human_id, Indebtedness.chat_id == chat_id,
+        Indebtedness.debt > 0)
     if len(people) == 0:
         return 'Задолженностей нет.'
     result = 'Задолженности({} {}):\n'.format(_name, _surname)
@@ -96,40 +98,36 @@ def get_all_undebts(_name, _surname, chat_id):
 
 
 def select_debt(from_name, from_surname, to_name, to_surname, chat_id):
-    try:
-        from_id = Participant.select().where(
+    from_id = Participant.select().where(
+        Participant.chat_id == chat_id,
+        Participant.name == from_name,
+        Participant.surname == from_surname).limit(1)
+
+    if len(from_id):
+        from_id = from_id[0]
+
+        to_id = Participant.select().where(
             Participant.chat_id == chat_id,
-            Participant.name == from_name,
-            Participant.surname == from_surname).limit(1)[0]
-        try:
-            to_id = Participant.select().where(
-                Participant.chat_id == chat_id,
-                Participant.name == to_name,
-                Participant.surname == to_surname).limit(1)[0]
-            try:
-                debts = Indebtedness.select().where(
-                    Indebtedness.chat_id == chat_id,
-                    Indebtedness.from_id == from_id,
-                    Indebtedness.to_id == to_id)
-                from_names = []
-                from_surnames = []
-                to_names = []
-                to_surnames = []
-                value = []
-                for debt in debts:
-                    from_names.append(debt.from_id.name)
-                    from_surnames.append(debt.from_id.surname)
-                    to_names.append(debt.to_id.name)
-                    to_surnames.append(debt.to_id.surname)
-                    value.append(debt.debt)
-            except Exception:
+            Participant.name == to_name,
+            Participant.surname == to_surname).limit(1)
+        if len(to_id):
+            to_id = to_id[0]
+
+            debts = Indebtedness.select().where(
+                Indebtedness.chat_id == chat_id,
+                Indebtedness.from_id == from_id,
+                Indebtedness.to_id == to_id)
+
+            if len(debts):
+                debt = debts[0]
+                return 'Задолженность:\n\t{} {} - {}'.format(
+                    debt.to_id.name, debt.to_id.surname, debt.debt)
+            else:
                 return 'Данная запись отсутствует'
-            return 'Задолженность:\n\t{} {} - {}'.format(
-                to_names[0], to_surnames[0], value[0])
-        except Exception:
-            return second_person_error
-    except Exception:
-        return first_person_error
+        else:
+            return person_error.format(to_name, to_surname)
+    else:
+        return person_error.format(from_name, from_surname)
 
 
 def create_debt(from_name, from_surname, to_name, to_surname, value, chat_id):
@@ -139,35 +137,40 @@ def create_debt(from_name, from_surname, to_name, to_surname, value, chat_id):
     if not exist(to_name, to_surname, chat_id):
         return '{} {} отсутствует среди участников'.format(to_name, to_surname)
     if value == 0:
-        return('Введите сумму задолженности')
+        return('Введите сумму задолженности\n')
     if value > 0:
-        try:
-            from_id = Participant.select().where(
+        from_id = Participant.select().where(
+            Participant.chat_id == chat_id,
+            Participant.name == from_name,
+            Participant.surname == from_surname).limit(1)
+
+        if len(from_id):
+            from_id = from_id[0]
+
+            to_id = Participant.select().where(
                 Participant.chat_id == chat_id,
-                Participant.name == from_name,
-                Participant.surname == from_surname).limit(1)[0]
-            try:
-                to_id = Participant.select().where(
-                    Participant.chat_id == chat_id,
-                    Participant.name == to_name,
-                    Participant.surname == to_surname).limit(1)[0]
-                try:
-                    query = Indebtedness.select().where(
-                        Indebtedness.chat_id == chat_id,
-                        Indebtedness.from_id == from_id,
-                        Indebtedness.to_id == to_id,
-                        Indebtedness.debt > 0).limit(1)[0]
+                Participant.name == to_name,
+                Participant.surname == to_surname).limit(1)
+            if len(to_id):
+                to_id = to_id[0]
+                query = Indebtedness.select().where(
+                    Indebtedness.chat_id == chat_id,
+                    Indebtedness.from_id == from_id,
+                    Indebtedness.to_id == to_id,
+                    Indebtedness.debt > 0).limit(1)
+                if len(query):
+                    query = query[0]
                     query.debt += value
                     query.save()
-                except Exception:
+                    return 'Запись успешно обновлена\n'
+                else:
                     Indebtedness.create(
                         from_id=from_id, to_id=to_id, debt=value, chat_id=chat_id)
-                    return 'Запись успешно добавлена'
-                return 'Запись успешно обновлена'
-            except Exception:
-                return second_person_error
-        except Exception:
-            return first_person_error
+                    return 'Запись успешно добавлена\n'
+            else:
+                return person_error.format(to_name, to_surname)
+        else:
+            return person_error.format(from_name, from_surname)
     if value < 0:
         create_debt(to_name, to_surname, from_name, from_surname, -value, chat_id)
 
@@ -190,71 +193,86 @@ def update_debt(from_name, from_surname, to_name, to_surname, value, chat_id):
     if value == 0:
         return
     if value > 0:
-        try:
+        #
+        # Первый user
+        #
+        from_id = Participant.select().where(
+            Participant.chat_id == chat_id,
+            Participant.name == from_name,
+            Participant.surname == from_surname)
+        if len(from_id):
+            from_id = from_id[0]
+
             #
-            # Первый user
+            # Второй user
             #
-            from_id = Participant.get(
+            to_id = Participant.select().where(
                 Participant.chat_id == chat_id,
-                Participant.name == from_name,
-                Participant.surname == from_surname)
-            try:
+                Participant.name == to_name,
+                Participant.surname == to_surname)
+
+            if len(to_id):
+                to_id = to_id[0]
+
                 #
-                # Второй user
+                # Запрос to_from
                 #
-                to_id = Participant.get(
-                    Participant.chat_id == chat_id,
-                    Participant.name == to_name,
-                    Participant.surname == to_surname)
-                try:
-                    #
-                    # Запрос to_from
-                    #
-                    to_from = Indebtedness.select().where(
-                        Indebtedness.chat_id == chat_id,
-                        Indebtedness.from_id == to_id.id,
-                        Indebtedness.to_id == from_id.id)[0]
-                    new_value = max(value - to_from.debt, 0)
-                    to_from.debt = max(to_from.debt - value, 0)
+                to_from = Indebtedness.select().where(
+                    Indebtedness.chat_id == chat_id,
+                    Indebtedness.from_id == to_id.id,
+                    Indebtedness.to_id == from_id.id)
+
+                if len(to_from):
+                    to_from = to_from[0]
+
+                    if value <= to_from.debt:
+                        to_from.debt -= value
+                        to_from.save()
+                        return successful_result
+
+                    new_value = value - to_from.debt
+                    to_from.debt = 0
                     to_from.save()
-                    try:
-                        #
-                        # Запрос from_to
-                        #
-                        from_to = Indebtedness.select().where(
-                            Indebtedness.chat_id == chat_id,
-                            Indebtedness.from_id == from_id.id,
-                            Indebtedness.to_id == to_id.id)[0]
+
+                    #
+                    # Запрос from_to
+                    #
+                    from_to = Indebtedness.select().where(
+                        Indebtedness.chat_id == chat_id,
+                        Indebtedness.from_id == from_id.id,
+                        Indebtedness.to_id == to_id.id)
+
+                    if len(from_to):
+                        from_to = from_to[0]
                         from_to.debt += new_value
                         from_to.save()
-                    except Exception:
+                    else:
                         result = create_debt(
                             from_id.name, from_id.surname,
                             to_id.name, to_id.surname, new_value, chat_id)
                         return result + successful_result
-                    return successful_results
-                except Exception:
-                    try:
-                        #
-                        # Запрос from_to
-                        #
-                        from_to = Indebtedness.select().where(
-                            Indebtedness.chat_id == chat_id,
-                            Indebtedness.from_id == from_id.id,
-                            Indebtedness.to_id == to_id.id)[0]
+                else:
+                    #
+                    # Запрос from_to
+                    #
+                    from_to = Indebtedness.select().where(
+                        Indebtedness.chat_id == chat_id,
+                        Indebtedness.from_id == from_id.id,
+                        Indebtedness.to_id == to_id.id)
+                    if len(from_to):
+                        from_to = from_to[0]
                         from_to.debt += value
                         from_to.save()
-                    except Exception:
+                    else:
                         result = create_debt(
                             from_id.name, from_id.surname,
                             to_id.name, to_id.surname, value, chat_id)
                         return '{}\n{}'.format(result, successful_result)
-                    return successful_result
                 return successful_result
-            except Exception:
-                return second_person_error
-        except Exception:
-            return first_person_error
+            else:
+                return person_error.format(to_name, to_surname)
+        else:
+            return person_error.format(from_name, from_surname)
     else:
         return update_debt(
             to_name, to_surname, from_name, from_surname, -value, chat_id)
